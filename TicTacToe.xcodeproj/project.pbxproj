@@ -155,6 +155,7 @@
 				TargetAttributes = {
 					61556BF919BE9DF0007E189E = {
 						CreatedOnToolsVersion = 6.0;
+						DevelopmentTeam = 399H9GK5VK;
 					};
 					61556C0B19BE9DF0007E189E = {
 						CreatedOnToolsVersion = 6.0;
@@ -382,6 +383,7 @@
 				61556C1819BE9DF0007E189E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		61556C1919BE9DF0007E189E /* Build configuration list for PBXNativeTarget "TicTacToeTests" */ = {
 			isa = XCConfigurationList;
@@ -390,6 +392,7 @@
 				61556C1B19BE9DF0007E189E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
