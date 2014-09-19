@@ -50,14 +50,14 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
     
     func startSinglePlayer() {
         Manager = GameManager(gameType: GameType.SinglePlayer, viewController: self)
-        playersLabel.text = "-> \(Manager.Player1.DisplayName()) vs. \(Manager.Player2.DisplayName())"
+        self.setPlayersLabel()
         collectionView.hidden = false
         collectionView.reloadData()
     }
     
     func startTwoPlayer() {
         Manager = GameManager(gameType: GameType.TwoPlayer, viewController: self)
-        playersLabel.text = "-> \(Manager.Player1.DisplayName()) vs. \(Manager.Player2.DisplayName())"
+        self.setPlayersLabel()
         collectionView.hidden = false
         collectionView.reloadData()
     }
@@ -78,6 +78,17 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
         self.presentViewController(alertController, animated: true) { () -> Void in
             // do something
         }
+    }
+    
+    func setPlayersLabel() {
+        var text = "\(Manager.Player1.DisplayName()) vs. \(Manager.Player2.DisplayName())"
+        if Manager.CurrentPlayerForTurn() == Manager.Player1 {
+            text = "-> \(text)"
+        }
+        else {
+            text = "\(text) <-"
+        }
+        playersLabel.text = text
     }
 
     func collectionView(collectionView: UICollectionView!, numberOfItemsInSection section: Int) -> Int {
@@ -112,17 +123,10 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
     }
     
     func collectionView(collectionView: UICollectionView!, didSelectItemAtIndexPath indexPath: NSIndexPath!) {
-        let piece = Manager.GameBoard[indexPath]
-        if piece?.PlayerOwner == nil {
-            if Manager.WhoseTurnIsIt == 1 {
-                piece?.PlayerOwner = Manager.Player1
-            }
-            else {
-                piece?.PlayerOwner = Manager.Player2
-            }
-            collectionView.reloadItemsAtIndexPaths([indexPath])
-            Manager.NextTurn()
+        if Manager.PlacedPiece(indexPath) {
+            self.setPlayersLabel()
         }
+        collectionView.reloadItemsAtIndexPaths([indexPath])
     }
 }
 
@@ -164,6 +168,22 @@ class GameManager: NSObject {
         return WhoseTurnIsIt == 1 ? Player1 : Player2
     }
     
+    func PlacedPiece(indexPath: NSIndexPath!) -> Bool {
+        let piece = self.GameBoard[indexPath]
+        if piece?.PlayerOwner == nil {
+            if self.WhoseTurnIsIt == 1 {
+                piece?.PlayerOwner = self.Player1
+            }
+            else {
+                piece?.PlayerOwner = self.Player2
+            }
+            self.NextTurn()
+            return true
+        }
+        
+        return false
+    }
+    
     func NextTurn() {
         self.CheckForWinner()
         TurnCount++
@@ -188,26 +208,75 @@ class GameManager: NSObject {
         for section : Int in 0...2 {
             let piece = GameBoard[NSIndexPath(forRow: 0, inSection: section)] as GamePiece!
             if let firstOwner = piece.PlayerOwner {
+                hasWon = true
                 for row in 1...2 {
                     hasWon = hasWon && (GameBoard[NSIndexPath(forRow: row, inSection: section)] as GamePiece!).PlayerOwner? == firstOwner
                 }
-            } else {
-                hasWon = false
+                if hasWon {
+                    break
+                }
             }
-            if hasWon {
-                break
+            else {
+                hasWon = false
             }
         }
         
-        // then diagonal
-        // then vertical rows
         if hasWon {
             self.EndGameForWinner(self.CurrentPlayerForTurn())
         }
+        
+        // then diagonals
+        let topLeft = GameBoard[NSIndexPath(forRow: 0, inSection: 0)] as GamePiece!
+        let topRight = GameBoard[NSIndexPath(forRow: 2, inSection: 0)] as GamePiece!
+        let middle = GameBoard[NSIndexPath(forRow: 1, inSection: 1)] as GamePiece!
+        let bottomRight = GameBoard[NSIndexPath(forRow: 2, inSection: 2)] as GamePiece!
+        let bottomLeft = GameBoard[NSIndexPath(forRow: 0, inSection: 2)] as GamePiece!
+        if middle.PlayerOwner != nil
+        {
+            hasWon = topLeft.PlayerOwner == middle.PlayerOwner && middle.PlayerOwner == bottomRight.PlayerOwner
+            if !hasWon {
+                hasWon = bottomLeft.PlayerOwner == middle.PlayerOwner && middle.PlayerOwner == topRight.PlayerOwner
+            }
+        }
+        
+        if hasWon {
+            self.EndGameForWinner(self.CurrentPlayerForTurn())
+        }
+        
+        // then vertical rows
+        hasWon = true
+        for row : Int in 0...2 {
+            let piece = GameBoard[NSIndexPath(forRow: row, inSection: 0)] as GamePiece!
+            if let firstOwner = piece.PlayerOwner {
+                hasWon = true
+                for section in 1...2 {
+                    hasWon = hasWon && (GameBoard[NSIndexPath(forRow: row, inSection: section)] as GamePiece!).PlayerOwner? == firstOwner
+                }
+                if hasWon {
+                    break
+                }
+            }
+            else {
+                hasWon = false
+            }
+        }
+        
+        if hasWon {
+            self.EndGameForWinner(self.CurrentPlayerForTurn())
+        }
+        else if self.TurnCount == 8 {
+            self.EndGameForWinner(nil)
+        }
     }
     
-    func EndGameForWinner(winner : Player!) {
-        self.ViewController.announceWinner("\(winner.DisplayName()) won! Play again?")
+    func EndGameForWinner(winner : Player?) {
+        if winner != nil {
+            self.ViewController.announceWinner("\(winner?.DisplayName()) won! Play again?")
+        }
+        else
+        {
+            self.ViewController.announceWinner("Draw! Play again?")
+        }
     }
 }
 
