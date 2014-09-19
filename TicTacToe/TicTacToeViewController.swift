@@ -11,6 +11,8 @@ import UIKit
 class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     var collectionView : UICollectionView!
+    var Manager : GameManager!
+    var playersLabel : UILabel!
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
@@ -18,21 +20,64 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
         self.title = "TicTacToe"
         self.view.backgroundColor = UIColor.whiteColor()
         
+        Manager = GameManager(gameType: GameType.UnStarted, viewController: self)
+        
+        playersLabel = UILabel(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: self.view.bounds.size.width, height: 100)))
+        playersLabel.backgroundColor = UIColor.whiteColor()
+        playersLabel.textAlignment = NSTextAlignment.Center
+        self.view.addSubview(playersLabel)
+        
         var flowLayout = UICollectionViewFlowLayout()
         flowLayout.minimumInteritemSpacing = 0
         flowLayout.minimumLineSpacing = 0
         flowLayout.sectionInset = UIEdgeInsets(top: 5, left: 0, bottom: 0, right: 0)
         flowLayout.scrollDirection = UICollectionViewScrollDirection.Vertical
         
-        collectionView = UICollectionView(frame: CGRect(origin: CGPointMake(0, 50), size: CGSize(width: self.view.bounds.size.width, height: self.view.bounds.size.height - 100)), collectionViewLayout: flowLayout)
+        collectionView = UICollectionView(frame: CGRect(origin: CGPointMake(0, 100), size: CGSize(width: self.view.bounds.size.width, height: self.view.bounds.size.height - 100)), collectionViewLayout: flowLayout)
         collectionView.registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = UIColor.blackColor()
         collectionView.autoresizingMask = UIViewAutoresizing.FlexibleHeight
         collectionView.contentInset = UIEdgeInsets(top: -5, left: 0, bottom: 0, right: 0)
-
+        collectionView.hidden = true
+        
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Single Player", style: UIBarButtonItemStyle.Plain, target: self, action: "startSinglePlayer")
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Two Player", style: UIBarButtonItemStyle.Plain, target: self, action: "startTwoPlayer")
+        
         self.view.addSubview(collectionView)
+    }
+    
+    func startSinglePlayer() {
+        Manager = GameManager(gameType: GameType.SinglePlayer, viewController: self)
+        playersLabel.text = "-> \(Manager.Player1.DisplayName()) vs. \(Manager.Player2.DisplayName())"
+        collectionView.hidden = false
+        collectionView.reloadData()
+    }
+    
+    func startTwoPlayer() {
+        Manager = GameManager(gameType: GameType.TwoPlayer, viewController: self)
+        playersLabel.text = "-> \(Manager.Player1.DisplayName()) vs. \(Manager.Player2.DisplayName())"
+        collectionView.hidden = false
+        collectionView.reloadData()
+    }
+    
+    func announceWinner(message: String) {
+        let alertController = UIAlertController(title: "Game Over", message: message, preferredStyle: UIAlertControllerStyle.Alert)
+        alertController.addAction(UIAlertAction(title: "Single Player", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+            self.startSinglePlayer()
+            alertController.dismissViewControllerAnimated(true, completion:nil)
+        }))
+        alertController.addAction(UIAlertAction(title: "Two Player", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
+            self.startTwoPlayer()
+            alertController.dismissViewControllerAnimated(true, completion:nil)
+        }))
+        alertController.addAction(UIAlertAction(title: "End", style: UIAlertActionStyle.Destructive, handler: { (action) -> Void in
+            alertController.dismissViewControllerAnimated(true, completion:nil)
+        }))
+        self.presentViewController(alertController, animated: true) { () -> Void in
+            // do something
+        }
     }
 
     func collectionView(collectionView: UICollectionView!, numberOfItemsInSection section: Int) -> Int {
@@ -50,14 +95,39 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
     func collectionView(collectionView: UICollectionView!, cellForItemAtIndexPath indexPath: NSIndexPath!) -> UICollectionViewCell! {
         var cell = collectionView.dequeueReusableCellWithReuseIdentifier("Cell", forIndexPath: indexPath) as UICollectionViewCell
         cell.backgroundColor = UIColor.whiteColor()
-        var label = UILabel(frame: cell.bounds)
-        label.text = "\(indexPath.section) and \(indexPath.row)"
-        cell.contentView.addSubview(label)
+        
+        for view in cell.contentView.subviews {
+            view.removeFromSuperview()
+        }
+        
+        let piece = Manager.GameBoard[indexPath]
+        if(piece?.PlayerOwner != nil) {
+            var label = UILabel(frame: cell.bounds)
+            label.text = piece?.PlayerOwner == Manager.Player1 ? "X" : "O"
+
+            label.textAlignment = NSTextAlignment.Center
+            cell.contentView.addSubview(label)
+        }
         return cell
+    }
+    
+    func collectionView(collectionView: UICollectionView!, didSelectItemAtIndexPath indexPath: NSIndexPath!) {
+        let piece = Manager.GameBoard[indexPath]
+        if piece?.PlayerOwner == nil {
+            if Manager.WhoseTurnIsIt == 1 {
+                piece?.PlayerOwner = Manager.Player1
+            }
+            else {
+                piece?.PlayerOwner = Manager.Player2
+            }
+            collectionView.reloadItemsAtIndexPaths([indexPath])
+            Manager.NextTurn()
+        }
     }
 }
 
 enum GameType: Int {
+    case UnStarted = 0
     case SinglePlayer = 1
     case TwoPlayer = 2
 }
@@ -68,11 +138,17 @@ class GameManager: NSObject {
     var Player1 : Player
     var Player2 : Player
     var CurrentGameType : GameType
+    var WhoseTurnIsIt : Int
+    var TurnCount : Int
+    var ViewController : TicTacToeViewController
     
-    init(gameType: GameType) {
+    init(gameType: GameType, viewController: TicTacToeViewController) {
         CurrentGameType = gameType
-        Player1 = Player(name: "X", isCPU: false)
-        Player2 = Player(name: "O", isCPU: CurrentGameType == GameType.SinglePlayer)
+        ViewController = viewController
+        
+        Player1 = Player(name: "Player 1", isCPU: false)
+        Player2 = Player(name: "Player 2", isCPU: CurrentGameType == GameType.SinglePlayer)
+        TurnCount = 0
         
         GameBoard = Dictionary<NSIndexPath, GamePiece>()
         for section in 0...3 {
@@ -80,8 +156,58 @@ class GameManager: NSObject {
                 GameBoard[NSIndexPath(forRow: row, inSection: section)] = GamePiece()
             }
         }
-        
+        WhoseTurnIsIt = 1
         super.init()
+    }
+    
+    func CurrentPlayerForTurn() -> Player! {
+        return WhoseTurnIsIt == 1 ? Player1 : Player2
+    }
+    
+    func NextTurn() {
+        self.CheckForWinner()
+        TurnCount++
+        WhoseTurnIsIt = WhoseTurnIsIt == 1 ? 2 : 1
+        if WhoseTurnIsIt == 2 && CurrentGameType == GameType.SinglePlayer {
+            // MAKE OUR AI SUPER DUPER SMART
+            self.PlayAITurn()
+        }
+        else {
+            // Do we need to do anything here?
+        }
+    }
+    
+    func PlayAITurn() {
+        
+    }
+    
+    func CheckForWinner() {
+        // Check all starting from top left
+        // Do horizontal rows
+        var hasWon : Bool = true
+        for section : Int in 0...2 {
+            let piece = GameBoard[NSIndexPath(forRow: 0, inSection: section)] as GamePiece!
+            if let firstOwner = piece.PlayerOwner {
+                for row in 1...2 {
+                    hasWon = hasWon && (GameBoard[NSIndexPath(forRow: row, inSection: section)] as GamePiece!).PlayerOwner? == firstOwner
+                }
+            } else {
+                hasWon = false
+            }
+            if hasWon {
+                break
+            }
+        }
+        
+        // then diagonal
+        // then vertical rows
+        if hasWon {
+            self.EndGameForWinner(self.CurrentPlayerForTurn())
+        }
+    }
+    
+    func EndGameForWinner(winner : Player!) {
+        self.ViewController.announceWinner("\(winner.DisplayName()) won! Play again?")
     }
 }
 
@@ -93,10 +219,15 @@ class Player : NSObject {
         Name = name
         IsCPU = isCPU
     }
+    
+    func DisplayName() -> String {
+        let cpuString = IsCPU ? " (CPU)" : ""
+        return "\(Name) \(cpuString)"
+    }
 }
 
 class GamePiece :NSObject {
-    var PlayerOwner : Player!
+    var PlayerOwner : Player?
     override init() {
         super.init()
     }
