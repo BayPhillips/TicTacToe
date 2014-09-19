@@ -12,10 +12,16 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
                             
     var window: UIWindow?
-
+    var mainNavigationController : UINavigationController?
 
     func application(application: UIApplication!, didFinishLaunchingWithOptions launchOptions: NSDictionary!) -> Bool {
         // Override point for customization after application launch.
+        
+        window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        mainNavigationController = UINavigationController(rootViewController: TicTacToeViewController())
+        window?.rootViewController = mainNavigationController;
+        window?.makeKeyAndVisible()
+        
         return true
     }
 

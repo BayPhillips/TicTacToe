@@ -8,8 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		61556C0019BE9DF0007E189E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61556BFF19BE9DF0007E189E /* AppDelegate.swift */; };
-		61556C0219BE9DF0007E189E /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61556C0119BE9DF0007E189E /* ViewController.swift */; };
-		61556C0519BE9DF0007E189E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61556C0319BE9DF0007E189E /* Main.storyboard */; };
+		61556C0219BE9DF0007E189E /* TicTacToeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61556C0119BE9DF0007E189E /* TicTacToeViewController.swift */; };
 		61556C0719BE9DF0007E189E /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61556C0619BE9DF0007E189E /* Images.xcassets */; };
 		61556C1319BE9DF0007E189E /* TicTacToeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61556C1219BE9DF0007E189E /* TicTacToeTests.swift */; };
 /* End PBXBuildFile section */
@@ -28,8 +27,7 @@
 		61556BFA19BE9DF0007E189E /* TicTacToe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TicTacToe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		61556BFE19BE9DF0007E189E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		61556BFF19BE9DF0007E189E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		61556C0119BE9DF0007E189E /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		61556C0419BE9DF0007E189E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		61556C0119BE9DF0007E189E /* TicTacToeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicTacToeViewController.swift; sourceTree = "<group>"; };
 		61556C0619BE9DF0007E189E /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		61556C0C19BE9DF0007E189E /* TicTacToeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TicTacToeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		61556C1119BE9DF0007E189E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -76,8 +74,7 @@
 			isa = PBXGroup;
 			children = (
 				61556BFF19BE9DF0007E189E /* AppDelegate.swift */,
-				61556C0119BE9DF0007E189E /* ViewController.swift */,
-				61556C0319BE9DF0007E189E /* Main.storyboard */,
+				61556C0119BE9DF0007E189E /* TicTacToeViewController.swift */,
 				61556C0619BE9DF0007E189E /* Images.xcassets */,
 				61556BFD19BE9DF0007E189E /* Supporting Files */,
 			);
@@ -189,7 +186,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				61556C0519BE9DF0007E189E /* Main.storyboard in Resources */,
 				61556C0719BE9DF0007E189E /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -208,7 +204,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				61556C0219BE9DF0007E189E /* ViewController.swift in Sources */,
+				61556C0219BE9DF0007E189E /* TicTacToeViewController.swift in Sources */,
 				61556C0019BE9DF0007E189E /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -230,17 +226,6 @@
 			targetProxy = 61556C0D19BE9DF0007E189E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		61556C0319BE9DF0007E189E /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				61556C0419BE9DF0007E189E /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		61556C1419BE9DF0007E189E /* Debug */ = {
