@@ -62,6 +62,13 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
         collectionView.reloadData()
     }
     
+    func reset() {
+        Manager = GameManager(gameType: GameType.UnStarted, viewController: self)
+        self.playersLabel.text = ""
+        collectionView.hidden = true
+        collectionView.reloadData()
+    }
+    
     func announceWinner(message: String) {
         let alertController = UIAlertController(title: "Game Over", message: message, preferredStyle: UIAlertControllerStyle.Alert)
         alertController.addAction(UIAlertAction(title: "Single Player", style: UIAlertActionStyle.Default, handler: { (action) -> Void in
@@ -73,6 +80,7 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
             alertController.dismissViewControllerAnimated(true, completion:nil)
         }))
         alertController.addAction(UIAlertAction(title: "End", style: UIAlertActionStyle.Destructive, handler: { (action) -> Void in
+            self.reset()
             alertController.dismissViewControllerAnimated(true, completion:nil)
         }))
         self.presentViewController(alertController, animated: true) { () -> Void in
@@ -126,7 +134,6 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
         if Manager.PlacedPiece(indexPath) {
             self.setPlayersLabel()
         }
-        collectionView.reloadItemsAtIndexPaths([indexPath])
     }
 }
 
@@ -145,23 +152,24 @@ class GameManager: NSObject {
     var WhoseTurnIsIt : Int
     var TurnCount : Int
     var ViewController : TicTacToeViewController
+    var AI : TicTacToeAI?
     
     init(gameType: GameType, viewController: TicTacToeViewController) {
         CurrentGameType = gameType
         ViewController = viewController
-        
         Player1 = Player(name: "Player 1", isCPU: false)
         Player2 = Player(name: "Player 2", isCPU: CurrentGameType == GameType.SinglePlayer)
         TurnCount = 0
         
         GameBoard = Dictionary<NSIndexPath, GamePiece>()
-        for section in 0...3 {
-            for row in 0...3 {
+        for section in 0...2 {
+            for row in 0...2 {
                 GameBoard[NSIndexPath(forRow: row, inSection: section)] = GamePiece()
             }
         }
         WhoseTurnIsIt = 1
         super.init()
+        AI = TicTacToeAI(gameManager: self)
     }
     
     func CurrentPlayerForTurn() -> Player! {
@@ -177,6 +185,7 @@ class GameManager: NSObject {
             else {
                 piece?.PlayerOwner = self.Player2
             }
+            ViewController.collectionView.reloadItemsAtIndexPaths([indexPath])
             self.NextTurn()
             return true
         }
@@ -189,8 +198,7 @@ class GameManager: NSObject {
         TurnCount++
         WhoseTurnIsIt = WhoseTurnIsIt == 1 ? 2 : 1
         if WhoseTurnIsIt == 2 && CurrentGameType == GameType.SinglePlayer {
-            // MAKE OUR AI SUPER DUPER SMART
-            self.PlayAITurn()
+            AI?.MakeBestMove()
         }
         else {
             // Do we need to do anything here?
@@ -270,8 +278,8 @@ class GameManager: NSObject {
     }
     
     func EndGameForWinner(winner : Player?) {
-        if winner != nil {
-            self.ViewController.announceWinner("\(winner?.DisplayName()) won! Play again?")
+        if let w = winner {
+            self.ViewController.announceWinner("\(w.DisplayName()) won! Play again?")
         }
         else
         {
@@ -289,8 +297,8 @@ class Player : NSObject {
         IsCPU = isCPU
     }
     
-    func DisplayName() -> String {
-        let cpuString = IsCPU ? " (CPU)" : ""
+    func DisplayName() -> String! {
+        let cpuString = IsCPU ? "(CPU)" : ""
         return "\(Name) \(cpuString)"
     }
 }
