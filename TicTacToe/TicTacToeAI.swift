@@ -18,7 +18,7 @@ class TicTacToeAI {
     func MakeBestMove() {
         // Check if I have two in a row anywhere and if so place it there
         // Vertical
-        for column in 0...2 {
+        for column in Manager.Board.Columns {
             if let freePiece = FreePieceInColumn(column, forPlayer: Manager.Player2) {
                 Manager.PlacedPiece(freePiece.X, y : freePiece.Y)
                 return
@@ -26,7 +26,7 @@ class TicTacToeAI {
         }
         
         // Horizontal
-        for row in 0...2 {
+        for row in Manager.Board.Rows {
             if let freePiece = FreePieceInRow(row, forPlayer: Manager.Player2) {
                 Manager.PlacedPiece(freePiece.X, y : freePiece.Y)
                 return
@@ -41,7 +41,7 @@ class TicTacToeAI {
 
         // Check if the opposing player has two in a row anywhere and if so place it there to Block
         // Vertical
-        for column in 0...2 {
+        for column in Manager.Board.Columns {
             if let freePiece = FreePieceInColumn(column, forPlayer: Manager.Player1) {
                 Manager.PlacedPiece(freePiece.X, y : freePiece.Y)
                 return
@@ -49,7 +49,7 @@ class TicTacToeAI {
         }
         
         // Horizontal
-        for row in 0...2 {
+        for row in Manager.Board.Rows {
             if let freePiece = FreePieceInRow(row, forPlayer: Manager.Player1) {
                 Manager.PlacedPiece(freePiece.X, y : freePiece.Y)
                 return
@@ -73,9 +73,9 @@ class TicTacToeAI {
         let third = Manager.Board.PieceAt(column, y:2) as GamePiece!
         
         if countOfMatchingPieces([first, second, third], forPlayer: forPlayer) >= 2 {
-            if first.PlayerOwner == nil { return first }
-            if second.PlayerOwner == nil { return second }
-            if third.PlayerOwner == nil { return third }
+            if first.IsOpen() { return first }
+            if second.IsOpen(){ return second }
+            if third.IsOpen() { return third }
         }
         
         return nil
@@ -87,9 +87,9 @@ class TicTacToeAI {
         let third = Manager.Board.PieceAt(2, y: row) as GamePiece!
         
         if countOfMatchingPieces([first, second, third], forPlayer: forPlayer) >= 2 {
-            if first.PlayerOwner == nil { return first }
-            if second.PlayerOwner == nil { return second }
-            if third.PlayerOwner == nil { return third }
+            if first.IsOpen() { return first }
+            if second.IsOpen() { return second }
+            if third.IsOpen() { return third }
         }
         
         return nil
@@ -99,16 +99,16 @@ class TicTacToeAI {
         // Diagonal if the AI owns the middle piece
         if Manager.Board.PieceAt(1, y: 1).PlayerOwner == forPlayer{
             // Check top left and right, bottom left and right
-            if Manager.Board.PieceAt(0, y: 0).PlayerOwner == forPlayer {
+            if Manager.Board.PieceAt(0, y: 0).PlayerOwner == forPlayer && Manager.Board.IsOpen(2, y: 2) {
                 return Manager.Board.PieceAt(2, y : 2)
             }
-            else if Manager.Board.PieceAt(2, y: 2).PlayerOwner == forPlayer {
+            else if Manager.Board.PieceAt(2, y: 2).PlayerOwner == forPlayer && Manager.Board.IsOpen(0, y: 0) {
                 return Manager.Board.PieceAt(0, y : 0)
             }
-            else if Manager.Board.PieceAt(0, y: 2).PlayerOwner == forPlayer {
+            else if Manager.Board.PieceAt(0, y: 2).PlayerOwner == forPlayer && Manager.Board.IsOpen(2, y: 0) {
                 return Manager.Board.PieceAt(2, y : 0)
             }
-            else if Manager.Board.PieceAt(2, y: 0).PlayerOwner == forPlayer {
+            else if Manager.Board.PieceAt(2, y: 0).PlayerOwner == forPlayer && Manager.Board.IsOpen(0, y: 2) {
                 return Manager.Board.PieceAt(0, y : 2)
             }
         }

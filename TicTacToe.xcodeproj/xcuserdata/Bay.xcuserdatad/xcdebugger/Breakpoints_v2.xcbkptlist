@@ -232,11 +232,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TicTacToe/TicTacToeViewController.swift"
-            timestampString = "432919938.395473"
+            timestampString = "432922024.963605"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "319"
-            endingLineNumber = "319"
+            startingLineNumber = "326"
+            endingLineNumber = "326"
             landmarkName = "DisplayName()"
             landmarkType = "5">
          </BreakpointContent>
@@ -303,36 +303,22 @@
             endingLineNumber = "21"
             landmarkName = "MakeBestMove()"
             landmarkType = "5">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "TicTacToe.TicTacToeAI.MakeBestMove (TicTacToe.TicTacToeAI)() -&gt; ()"
-                  moduleName = "TicTacToe"
-                  urlString = "file:///Users/Bay/TicTacToe/TicTacToe/TicTacToeAI.swift"
-                  timestampString = "432920444.798699"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "21"
-                  endingLineNumber = "21"
-                  offsetFromSymbolStart = "15">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "TicTacToe.TicTacToeAI.MakeBestMove (TicTacToe.TicTacToeAI)() -&gt; ()"
-                  moduleName = "TicTacToe"
-                  urlString = "file:///Users/Bay/TicTacToe/TicTacToe/TicTacToeAI.swift"
-                  timestampString = "432920444.799006"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "21"
-                  endingLineNumber = "21"
-                  offsetFromSymbolStart = "115">
-               </Location>
-            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "TicTacToe/TicTacToeViewController.swift"
+            timestampString = "432921477.778993"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "176"
+            endingLineNumber = "176"
+            landmarkName = "PlacedPiece(_:y:)"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -174,7 +174,7 @@ class GameManager: NSObject {
     
     func PlacedPiece(x : Int, y : Int) -> Bool {
         let piece = Board.PieceAt(x, y: y)
-        if piece?.PlayerOwner == nil {
+        if piece.IsOpen() {
             if self.WhoseTurnIsIt == 1 {
                 piece?.PlayerOwner = self.Player1
             }
@@ -251,7 +251,7 @@ class GameManager: NSObject {
         
         // then vertical rows
         hasWon = true
-        for row : Int in 0...2 {
+        for row : Int in Board.Rows {
             let piece = Board.PieceAt(row, y: 0) as GamePiece!
             if let firstOwner = piece.PlayerOwner {
                 hasWon = true
@@ -289,19 +289,26 @@ class GameManager: NSObject {
 
 class GameBoard : NSObject {
     var _data : Dictionary<NSIndexPath, GamePiece>
+    lazy var Columns : [Int] = [0,1,2]
+    lazy var Rows : [Int] = [0,1,2]
     
     override init() {
         _data = Dictionary<NSIndexPath, GamePiece>()
-        for section in 0...2 {
-            for row in 0...2 {
+        super.init()
+        
+        for section in Columns {
+            for row in Rows {
                 _data[NSIndexPath(forRow: row, inSection: section)] = GamePiece(x: section, y: row)
             }
         }
-        super.init()
     }
     
     func PieceAt(x : Int, y : Int) -> GamePiece! {
         return _data[NSIndexPath(forRow: y, inSection: x)] as GamePiece!
+    }
+    
+    func IsOpen(x: Int, y: Int) -> Bool {
+        return PieceAt(x, y: y).IsOpen()
     }
 }
 
@@ -329,5 +336,9 @@ class GamePiece :NSObject {
         X = x
         Y = y
         super.init()
+    }
+    
+    func IsOpen() -> Bool {
+        return PlayerOwner == nil
     }
 }
