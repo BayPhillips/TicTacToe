@@ -303,6 +303,36 @@
             endingLineNumber = "21"
             landmarkName = "MakeBestMove()"
             landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "TicTacToe.TicTacToeAI.MakeBestMove (TicTacToe.TicTacToeAI)() -&gt; ()"
+                  moduleName = "TicTacToe"
+                  urlString = "file:///Users/Bay/TicTacToe/TicTacToe/TicTacToeAI.swift"
+                  timestampString = "432920444.798699"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "21"
+                  endingLineNumber = "21"
+                  offsetFromSymbolStart = "15">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "TicTacToe.TicTacToeAI.MakeBestMove (TicTacToe.TicTacToeAI)() -&gt; ()"
+                  moduleName = "TicTacToe"
+                  urlString = "file:///Users/Bay/TicTacToe/TicTacToe/TicTacToeAI.swift"
+                  timestampString = "432920444.799006"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "21"
+                  endingLineNumber = "21"
+                  offsetFromSymbolStart = "115">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
