@@ -26,6 +26,7 @@ class TicTacToeAI {
                 break
             }
         }
+        
         // Diagonal
         // Vertical
         
@@ -40,9 +41,9 @@ class TicTacToeAI {
     }
     
     func ColumnHasFreeSpaceAtEnd(column : Int, forPlayer : Player) -> Bool {
-        let first = Manager.GameBoard[NSIndexPath(forRow: 0, inSection: column)] as GamePiece!
-        let second = Manager.GameBoard[NSIndexPath(forRow: 1, inSection: column)] as GamePiece!
-        let third = Manager.GameBoard[NSIndexPath(forRow: 2, inSection: column)] as GamePiece!
+        let first = Manager.Board.PieceAt(0, y: column) as GamePiece!
+        let second = Manager.Board.PieceAt(1, y: column) as GamePiece!
+        let third = Manager.Board.PieceAt(2, y: column) as GamePiece!
         return first.PlayerOwner == forPlayer && second.PlayerOwner == forPlayer && third.PlayerOwner == nil
     }
     

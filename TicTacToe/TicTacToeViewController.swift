@@ -119,7 +119,7 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
             view.removeFromSuperview()
         }
         
-        let piece = Manager.GameBoard[indexPath]
+        let piece = Manager.Board.PieceAt(indexPath.row, y: indexPath.section)
         if(piece?.PlayerOwner != nil) {
             var label = UILabel(frame: cell.bounds)
             label.text = piece?.PlayerOwner == Manager.Player1 ? "X" : "O"
@@ -145,7 +145,7 @@ enum GameType: Int {
 
 class GameManager: NSObject {
 
-    var GameBoard : Dictionary<NSIndexPath, GamePiece>
+    var Board : GameBoard
     var Player1 : Player
     var Player2 : Player
     var CurrentGameType : GameType
@@ -161,12 +161,7 @@ class GameManager: NSObject {
         Player2 = Player(name: "Player 2", isCPU: CurrentGameType == GameType.SinglePlayer)
         TurnCount = 0
         
-        GameBoard = Dictionary<NSIndexPath, GamePiece>()
-        for section in 0...2 {
-            for row in 0...2 {
-                GameBoard[NSIndexPath(forRow: row, inSection: section)] = GamePiece()
-            }
-        }
+        Board = GameBoard()
         WhoseTurnIsIt = 1
         super.init()
         AI = TicTacToeAI(gameManager: self)
@@ -177,7 +172,7 @@ class GameManager: NSObject {
     }
     
     func PlacedPiece(indexPath: NSIndexPath!) -> Bool {
-        let piece = self.GameBoard[indexPath]
+        let piece = Board.PieceAt(indexPath.row, y: indexPath.section)
         if piece?.PlayerOwner == nil {
             if self.WhoseTurnIsIt == 1 {
                 piece?.PlayerOwner = self.Player1
@@ -214,11 +209,11 @@ class GameManager: NSObject {
         // Do horizontal rows
         var hasWon : Bool = true
         for section : Int in 0...2 {
-            let piece = GameBoard[NSIndexPath(forRow: 0, inSection: section)] as GamePiece!
+            let piece = Board.PieceAt(0, y: section) as GamePiece!
             if let firstOwner = piece.PlayerOwner {
                 hasWon = true
                 for row in 1...2 {
-                    hasWon = hasWon && (GameBoard[NSIndexPath(forRow: row, inSection: section)] as GamePiece!).PlayerOwner? == firstOwner
+                    hasWon = hasWon && (Board.PieceAt(row, y: section) as GamePiece!).PlayerOwner? == firstOwner
                 }
                 if hasWon {
                     break
@@ -234,11 +229,11 @@ class GameManager: NSObject {
         }
         
         // then diagonals
-        let topLeft = GameBoard[NSIndexPath(forRow: 0, inSection: 0)] as GamePiece!
-        let topRight = GameBoard[NSIndexPath(forRow: 2, inSection: 0)] as GamePiece!
-        let middle = GameBoard[NSIndexPath(forRow: 1, inSection: 1)] as GamePiece!
-        let bottomRight = GameBoard[NSIndexPath(forRow: 2, inSection: 2)] as GamePiece!
-        let bottomLeft = GameBoard[NSIndexPath(forRow: 0, inSection: 2)] as GamePiece!
+        let topLeft = Board.PieceAt(0, y: 0)  as GamePiece!
+        let topRight = Board.PieceAt(2, y: 0) as GamePiece!
+        let middle = Board.PieceAt(1, y: 1) as GamePiece!
+        let bottomRight =  Board.PieceAt(2, y: 2) as GamePiece!
+        let bottomLeft = Board.PieceAt(0, y: 2) as GamePiece!
         if middle.PlayerOwner != nil
         {
             hasWon = topLeft.PlayerOwner == middle.PlayerOwner && middle.PlayerOwner == bottomRight.PlayerOwner
@@ -254,11 +249,11 @@ class GameManager: NSObject {
         // then vertical rows
         hasWon = true
         for row : Int in 0...2 {
-            let piece = GameBoard[NSIndexPath(forRow: row, inSection: 0)] as GamePiece!
+            let piece = Board.PieceAt(row, y: 0) as GamePiece!
             if let firstOwner = piece.PlayerOwner {
                 hasWon = true
                 for section in 1...2 {
-                    hasWon = hasWon && (GameBoard[NSIndexPath(forRow: row, inSection: section)] as GamePiece!).PlayerOwner? == firstOwner
+                    hasWon = hasWon && (Board.PieceAt(row, y: section) as GamePiece!).PlayerOwner? == firstOwner
                 }
                 if hasWon {
                     break
@@ -285,6 +280,24 @@ class GameManager: NSObject {
         {
             self.ViewController.announceWinner("Draw! Play again?")
         }
+    }
+}
+
+class GameBoard : NSObject {
+    var _data : Dictionary<NSIndexPath, GamePiece>
+    
+    override init() {
+        _data = Dictionary<NSIndexPath, GamePiece>()
+        for section in 0...2 {
+            for row in 0...2 {
+                _data[NSIndexPath(forRow: row, inSection: section)] = GamePiece()
+            }
+        }
+        super.init()
+    }
+    
+    func PieceAt(x : Int, y : Int) -> GamePiece! {
+        return _data[NSIndexPath(forRow: y, inSection: x)] as GamePiece!
     }
 }
 
