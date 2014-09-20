@@ -151,6 +151,7 @@ class GameManager: NSObject {
     var CurrentGameType : GameType
     var WhoseTurnIsIt : Int
     var TurnCount : Int
+    var Finished : Bool
     var ViewController : TicTacToeViewController
     var AI : TicTacToeAI?
     
@@ -160,7 +161,7 @@ class GameManager: NSObject {
         Player1 = Player(name: "Player 1", isCPU: false)
         Player2 = Player(name: "Player 2", isCPU: CurrentGameType == GameType.SinglePlayer)
         TurnCount = 0
-        
+        Finished = false
         Board = GameBoard()
         WhoseTurnIsIt = 1
         super.init()
@@ -190,13 +191,15 @@ class GameManager: NSObject {
     
     func NextTurn() {
         self.CheckForWinner()
-        TurnCount++
-        WhoseTurnIsIt = WhoseTurnIsIt == 1 ? 2 : 1
-        if WhoseTurnIsIt == 2 && CurrentGameType == GameType.SinglePlayer {
-            AI?.MakeBestMove()
-        }
-        else {
-            // Do we need to do anything here?
+        if !Finished {
+            TurnCount++
+            WhoseTurnIsIt = WhoseTurnIsIt == 1 ? 2 : 1
+            if WhoseTurnIsIt == 2 && CurrentGameType == GameType.SinglePlayer {
+                AI?.MakeBestMove()
+            }
+            else {
+                // Do we need to do anything here?
+            }
         }
     }
     
@@ -273,6 +276,7 @@ class GameManager: NSObject {
     }
     
     func EndGameForWinner(winner : Player?) {
+        Finished = true
         if let w = winner {
             self.ViewController.announceWinner("\(w.DisplayName()) won! Play again?")
         }
