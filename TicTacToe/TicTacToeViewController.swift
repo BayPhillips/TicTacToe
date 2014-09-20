@@ -123,7 +123,7 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
         if(piece?.PlayerOwner != nil) {
             var label = UILabel(frame: cell.bounds)
             label.text = piece?.PlayerOwner == Manager.Player1 ? "X" : "O"
-
+            label.font = UIFont.systemFontOfSize(30)
             label.textAlignment = NSTextAlignment.Center
             cell.contentView.addSubview(label)
         }
@@ -131,7 +131,7 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
     }
     
     func collectionView(collectionView: UICollectionView!, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        if Manager.PlacedPiece(indexPath) {
+        if Manager.PlacedPiece(indexPath.row, y: indexPath.section) {
             self.setPlayersLabel()
         }
     }
@@ -171,8 +171,8 @@ class GameManager: NSObject {
         return WhoseTurnIsIt == 1 ? Player1 : Player2
     }
     
-    func PlacedPiece(indexPath: NSIndexPath!) -> Bool {
-        let piece = Board.PieceAt(indexPath.row, y: indexPath.section)
+    func PlacedPiece(x : Int, y : Int) -> Bool {
+        let piece = Board.PieceAt(x, y: y)
         if piece?.PlayerOwner == nil {
             if self.WhoseTurnIsIt == 1 {
                 piece?.PlayerOwner = self.Player1
@@ -180,7 +180,7 @@ class GameManager: NSObject {
             else {
                 piece?.PlayerOwner = self.Player2
             }
-            ViewController.collectionView.reloadItemsAtIndexPaths([indexPath])
+            ViewController.collectionView.reloadItemsAtIndexPaths([NSIndexPath(forRow: x, inSection: y)])
             self.NextTurn()
             return true
         }
@@ -290,7 +290,7 @@ class GameBoard : NSObject {
         _data = Dictionary<NSIndexPath, GamePiece>()
         for section in 0...2 {
             for row in 0...2 {
-                _data[NSIndexPath(forRow: row, inSection: section)] = GamePiece()
+                _data[NSIndexPath(forRow: row, inSection: section)] = GamePiece(x: section, y: row)
             }
         }
         super.init()
@@ -318,7 +318,12 @@ class Player : NSObject {
 
 class GamePiece :NSObject {
     var PlayerOwner : Player?
-    override init() {
+    var X : Int
+    var Y : Int
+    
+    init(x: Int, y : Int) {
+        X = x
+        Y = y
         super.init()
     }
 }
