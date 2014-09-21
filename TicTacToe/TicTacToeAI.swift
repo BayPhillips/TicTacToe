@@ -8,6 +8,16 @@
 
 import Foundation
 
+struct MMLine {
+    var row1, col1, row2, col2, row3, col3 : Int
+}
+
+struct MMResult {
+    var x : Int
+    var y : Int
+    var score : Int
+}
+
 class TicTacToeAI {
     var Manager : GameManager
     var dummyBoard : GameBoard
@@ -18,52 +28,8 @@ class TicTacToeAI {
     }
     
     func MakeBestMove() {
-//        var leftPieces = [GamePiece]()
-//        var rightPieces = [GamePiece]()
-//        var topPieces = [GamePiece]()
-//        var bottomPieces = [GamePiece]()
-//        
-//        for x in [0,1] {
-//            for y in Manager.Board.Rows {
-//                leftPieces.append(Manager.Board.PieceAt(x, y: y))
-//            }
-//        }
-//        
-//        for x in [1,2] {
-//            for y in Manager.Board.Rows {
-//                rightPieces.append(Manager.Board.PieceAt(x, y: y))
-//            }
-//        }
-//        
-//        for x in Manager.Board.Columns {
-//            for y in [0,1] {
-//                topPieces.append(Manager.Board.PieceAt(x, y: y))
-//            }
-//        }
-//        
-//        for x in Manager.Board.Columns {
-//            for y in [1,2] {
-//                bottomPieces.append(Manager.Board.PieceAt(x, y: y))
-//            }
-//        }
-//        
-//        let numberInLeft = countOfMatchingPieces(leftPieces, forPlayer: Manager.Player1)
-//        let numberInRight = countOfMatchingPieces(rightPieces, forPlayer: Manager.Player1)
-//        let numberInTop = countOfMatchingPieces(topPieces, forPlayer: Manager.Player1)
-//        let numberInBottom = countOfMatchingPieces(bottomPieces, forPlayer: Manager.Player1)
         
-//        let leftRightPreference = numberInLeft == numberInRight
-//            ? 0
-//            : numberInLeft > numberInRight
-//                ? 1
-//                : 2
-//        
-//        let topBottomPreference = numberInTop == numberInBottom
-//            ? 0
-//            : numberInTop > numberInBottom
-//                ? 1
-//                : 2
-        
+        // Try to place it in the middle if it's the first turn
         if Manager.TurnCount == 1 {
             if Manager.Board.PieceAt(1, y: 1).IsOpen() {
                 Manager.PlacedPiece(1, y: 1)
@@ -120,18 +86,9 @@ class TicTacToeAI {
             return
         }
         
-        // Can I make a fork
-        let depth = 2
-        let myFork = MinMax(depth, player: Manager.Player2, alpha: Int.min, beta: Int.max)
-        NSLog("Fork: \(myFork.score)")
-        if myFork.score > 0 {
-            Manager.PlacedPiece(myFork.x, y: myFork.y)
-            return
-        }
-        
         // Can I block a fork
-        let blockFork = MinMax(depth, player: Manager.Player1, alpha: Int.min, beta: Int.max)
-        NSLog("Block: \(blockFork.score)")
+        let depth = 2
+        let blockFork = MinMax(depth, player: Manager.Player2, alpha: Int.min, beta: Int.max)
         if blockFork.score < 0 {
             Manager.PlacedPiece(blockFork.x, y: blockFork.y)
             return
@@ -143,11 +100,13 @@ class TicTacToeAI {
             return
         }
         
+        // Place in a corner if free
         if let free = FreeCornerPiece() {
             Manager.PlacedPiece(free.X, y: free.Y)
             return
         }
         
+        // Place it somewhere already!
         if let free = FreeMiddlePiece() {
             Manager.PlacedPiece(free.X, y: free.Y)
             return
@@ -186,16 +145,20 @@ class TicTacToeAI {
         // Diagonal if the AI owns the middle piece
         if Manager.Board.PieceAt(1, y: 1).PlayerOwner == forPlayer {
             // Check top left and right, bottom left and right
-            if Manager.Board.PieceAt(0, y: 0).PlayerOwner == forPlayer && Manager.Board.IsOpen(2, y: 2) {
+            if Manager.Board.PieceAt(0, y: 0).PlayerOwner == forPlayer
+                && Manager.Board.IsOpen(2, y: 2) {
                 return Manager.Board.PieceAt(2, y : 2)
             }
-            else if Manager.Board.PieceAt(2, y: 2).PlayerOwner == forPlayer && Manager.Board.IsOpen(0, y: 0) {
+            else if Manager.Board.PieceAt(2, y: 2).PlayerOwner == forPlayer
+                && Manager.Board.IsOpen(0, y: 0) {
                 return Manager.Board.PieceAt(0, y : 0)
             }
-            else if Manager.Board.PieceAt(0, y: 2).PlayerOwner == forPlayer && Manager.Board.IsOpen(2, y: 0) {
+            else if Manager.Board.PieceAt(0, y: 2).PlayerOwner == forPlayer
+                && Manager.Board.IsOpen(2, y: 0) {
                 return Manager.Board.PieceAt(2, y : 0)
             }
-            else if Manager.Board.PieceAt(2, y: 0).PlayerOwner == forPlayer && Manager.Board.IsOpen(0, y: 2) {
+            else if Manager.Board.PieceAt(2, y: 0).PlayerOwner == forPlayer
+                && Manager.Board.IsOpen(0, y: 2) {
                 return Manager.Board.PieceAt(0, y : 2)
             }
         }
@@ -271,7 +234,7 @@ class TicTacToeAI {
         var emptyPieces = dummyBoard.EmptyPieces()
         
         if emptyPieces.count == 0 || depth == 0 {
-            // Game over, cant do anything
+            // Game over (shouldn't get here), or done with check
             score = evaluateScore()
             return MMResult(x: bestX, y: bestY, score: score)
         }
@@ -300,7 +263,7 @@ class TicTacToeAI {
             }
         }
         
-        return MMResult(x: bestX, y: bestY, score: player == Manager.Player2 ? alpha : beta)
+        return MMResult(x: bestX, y: bestY, score: player == Manager.Player2 ? currentAlpha : currentBeta)
     }
     
     private func evaluateScore() -> Int {
@@ -376,14 +339,4 @@ class TicTacToeAI {
         
         return score
     }
-}
-
-struct MMLine {
-    var row1, col1, row2, col2, row3, col3 : Int
-}
-
-struct MMResult {
-    var x : Int
-    var y : Int
-    var score : Int
 }
