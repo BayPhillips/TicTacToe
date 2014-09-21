@@ -287,28 +287,63 @@ class GameManager: NSObject {
     }
 }
 
-class GameBoard : NSObject {
-    var _data : Dictionary<NSIndexPath, GamePiece>
+class GameBoard : NSObject, NSCopying {
+    var data : Dictionary<NSIndexPath, GamePiece>
     lazy var Columns : [Int] = [0,1,2]
     lazy var Rows : [Int] = [0,1,2]
     
     override init() {
-        _data = Dictionary<NSIndexPath, GamePiece>()
+        data = Dictionary<NSIndexPath, GamePiece>()
         super.init()
         
         for section in Columns {
             for row in Rows {
-                _data[NSIndexPath(forRow: row, inSection: section)] = GamePiece(x: section, y: row)
+                data[NSIndexPath(forRow: row, inSection: section)] = GamePiece(x: section, y: row)
             }
         }
     }
     
+    func copyWithZone(zone: NSZone) -> AnyObject {
+        var newBoard : GameBoard = GameBoard()
+        newBoard.data = data
+        return newBoard
+    }
+    
     func PieceAt(x : Int, y : Int) -> GamePiece! {
-        return _data[NSIndexPath(forRow: y, inSection: x)] as GamePiece!
+        return data[NSIndexPath(forRow: y, inSection: x)] as GamePiece!
+    }
+    
+    func IsRightOpenForPiece(piece : GamePiece!) -> Bool {
+        return piece.X != 2 && PieceAt(piece.X + 1, y: piece.Y).IsOpen()
+    }
+    
+    func IsLeftOpenForPiece(piece : GamePiece!) -> Bool {
+        return piece.X != 0 && PieceAt(piece.X - 1, y: piece.Y).IsOpen()
+    }
+    
+    func IsAboveOpenForPiece(piece : GamePiece!) -> Bool {
+        return piece.Y != 0 && PieceAt(piece.X, y: piece.Y - 1).IsOpen()
+    }
+    
+    func IsBelowOpenForPiece(piece : GamePiece!) -> Bool {
+        return piece.Y != 2 && PieceAt(piece.X, y: piece.Y + 1).IsOpen()
     }
     
     func IsOpen(x: Int, y: Int) -> Bool {
         return PieceAt(x, y: y).IsOpen()
+    }
+    
+    func EmptyPieces() -> [GamePiece] {
+        var empty = [GamePiece]()
+        for column in self.Columns {
+            for row in self.Rows {
+                let emptyPiece = self.PieceAt(row, y: column)
+                if emptyPiece.IsOpen() {
+                    empty.append(emptyPiece)
+                }
+            }
+        }
+        return empty
     }
 }
 
@@ -327,7 +362,7 @@ class Player : NSObject {
     }
 }
 
-class GamePiece :NSObject {
+class GamePiece : NSObject, NSCopying {
     var PlayerOwner : Player?
     var X : Int
     var Y : Int
@@ -336,6 +371,12 @@ class GamePiece :NSObject {
         X = x
         Y = y
         super.init()
+    }
+    
+    func copyWithZone(zone: NSZone) -> AnyObject {
+        var newPiece : GamePiece = GamePiece(x: X, y: Y)
+        newPiece.PlayerOwner = PlayerOwner
+        return newPiece
     }
     
     func IsOpen() -> Bool {
