@@ -11,23 +11,23 @@ import UIKit
 class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     var collectionView : UICollectionView!
-    var Manager : GameManager!
+    var manager : GameManager!
     var playersLabel : UILabel!
     var hasLoaded : Bool = false
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         if(!hasLoaded) {
-            self.edgesForExtendedLayout = UIRectEdge.None
-            self.title = "TicTacToe"
-            self.view.backgroundColor = UIColor.whiteColor()
+            edgesForExtendedLayout = UIRectEdge.None
+            title = "TicTacToe"
+            view.backgroundColor = UIColor.whiteColor()
             
-            playersLabel = UILabel(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: self.view.bounds.size.width, height: 100)))
+            playersLabel = UILabel(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: view.bounds.size.width, height: 100)))
             playersLabel.backgroundColor = UIColor.whiteColor()
             playersLabel.textAlignment = NSTextAlignment.Center
             playersLabel.autoresizingMask = UIViewAutoresizing.FlexibleWidth
             playersLabel.text = "Select a game mode to start"
-            self.view.addSubview(playersLabel)
+            view.addSubview(playersLabel)
             
             var flowLayout = UICollectionViewFlowLayout()
             flowLayout.minimumInteritemSpacing = 0
@@ -35,7 +35,7 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
             flowLayout.sectionInset = UIEdgeInsets(top: 5, left: 0, bottom: 0, right: 0)
             flowLayout.scrollDirection = UICollectionViewScrollDirection.Vertical
             
-            collectionView = UICollectionView(frame: CGRect(origin: CGPointMake(0, 100), size: CGSize(width: self.view.bounds.size.width, height: self.view.bounds.size.height - 100)), collectionViewLayout: flowLayout)
+            collectionView = UICollectionView(frame: CGRect(origin: CGPointMake(0, 100), size: CGSize(width: view.bounds.size.width, height: view.bounds.size.height - 100)), collectionViewLayout: flowLayout)
             collectionView.registerClass(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
             collectionView.delegate = self
             collectionView.dataSource = self
@@ -45,33 +45,33 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
             collectionView.hidden = true
             
             // Gets the game in into its initial state
-            self.reset()
+            reset()
             
-            self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Single Player", style: UIBarButtonItemStyle.Plain, target: self, action: "startSinglePlayer")
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Two Player", style: UIBarButtonItemStyle.Plain, target: self, action: "startTwoPlayer")
+            navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Single Player", style: UIBarButtonItemStyle.Plain, target: self, action: "startSinglePlayer")
+            navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Two Player", style: UIBarButtonItemStyle.Plain, target: self, action: "startTwoPlayer")
             
-            self.view.addSubview(collectionView)
+            view.addSubview(collectionView)
             
             hasLoaded = true
         }
     }
     
     func startSinglePlayer() {
-        self.startGameWithType(GameType.SinglePlayer)
+        startGameWithType(GameType.SinglePlayer)
     }
     
     func startTwoPlayer() {
-        self.startGameWithType(GameType.TwoPlayer)
+        startGameWithType(GameType.TwoPlayer)
     }
     
     func reset() {
-        self.startGameWithType(GameType.UnStarted)
+        startGameWithType(GameType.UnStarted)
         collectionView.hidden = true
     }
     
     func startGameWithType(gameType: GameType) {
-        Manager = GameManager(gameType: gameType, viewController: self)
-        self.setPlayersLabel()
+        manager = GameManager(gameType: gameType, parentViewController: self)
+        setPlayersLabel()
         collectionView.hidden = false
         collectionView.reloadData()
     }
@@ -90,19 +90,19 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
             self.reset()
             alertController.dismissViewControllerAnimated(true, completion:nil)
         }))
-        self.presentViewController(alertController, animated: true) { () -> Void in
+        presentViewController(alertController, animated: true) { () -> Void in
             // do something
         }
     }
     
     func setPlayersLabel() {
         var text : String = String()
-        if Manager.CurrentGameType == GameType.UnStarted {
+        if manager.currentGameType == GameType.UnStarted {
             text = "Select a game mode to start"
         }
         else {
-            text = "\(Manager.Player1.DisplayName()) vs. \(Manager.Player2.DisplayName())"
-            if Manager.CurrentPlayerForTurn() == Manager.Player1 {
+            text = "\(manager.player1.displayName) vs. \(manager.player2.displayName)"
+            if manager.currentPlayerForTurn == manager.player1 {
                 text = "-> \(text)"
             }
             else {
@@ -114,11 +114,11 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
     }
 
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return Manager.Board.Columns.count
+        return manager.board.columns.count
     }
     
     func numberOfSectionsInCollectionView(collectionView: UICollectionView!) -> Int {
-        return Manager.Board.Rows.count
+        return manager.board.columns.count
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout!, sizeForItemAtIndexPath indexPath: NSIndexPath!) -> CGSize {
@@ -133,10 +133,10 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
             view.removeFromSuperview()
         }
         
-        let piece = Manager.Board.PieceAt(indexPath.row, y: indexPath.section)
-        if(piece?.PlayerOwner != nil) {
+        let piece = manager.board.pieceAt(indexPath.row, y: indexPath.section)
+        if(piece?.playerOwner != nil) {
             var label = UILabel(frame: cell.bounds)
-            label.text = piece?.PlayerOwner == Manager.Player1 ? "X" : "O"
+            label.text = piece?.playerOwner == manager.player1 ? "X" : "O"
             label.font = UIFont.systemFontOfSize(30)
             label.textAlignment = NSTextAlignment.Center
             cell.contentView.addSubview(label)
@@ -145,8 +145,8 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
     }
     
     func collectionView(collectionView: UICollectionView!, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        if Manager.PlacedPiece(indexPath.row, y: indexPath.section) {
-            self.setPlayersLabel()
+        if manager.placedPiece(indexPath.row, y: indexPath.section) {
+            setPlayersLabel()
         }
     }
 }
