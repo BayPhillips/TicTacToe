@@ -6,5 +6,5 @@ Making a super simple TicTacToe game with Swift.
 - CPU is unbeatable
 - Uses standard UIKit components
 
-![Screenshot 1](http://myimg.us/images/09.21.14/45071.png)
-![Screenshot 2](http://myimg.us/images/09.21.14/45070.png)
+![Gif](http://myimg.us/images/09.21.14/45072.gif)
+![Screenshot 1](http://myimg.us/images/09.21.14/45071.png)![Screenshot 2](http://myimg.us/images/09.21.14/45070.png)
