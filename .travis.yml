@@ -4,4 +4,4 @@ before_install:
 - brew uninstall xctool; brew install xctool --HEAD;
 xcode_project: TicTacToe.xcodeproj
 xcode_scheme: TicTacToe
-xcode_sdk: iphonesimulator
+xcode_sdk: iphonesimulator8.0
