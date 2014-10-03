@@ -1,6 +1,6 @@
 TicTacToe
 =========
-
+![travis ci build](https://travis-ci.org/BayPhillips/TicTacToe.svg?branch=master)
 Making a super simple TicTacToe game with Swift.
 - Allows Human vs Human and Human vs CPU
 - CPU is unbeatable
