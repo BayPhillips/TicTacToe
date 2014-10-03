@@ -1,4 +1,4 @@
 language: objective-c
 xcode_project: TicTacToe.xcodeproj
-xcode_scheme: TicTacToe
+xcode_scheme: TicTacToeTests
 xcode_sdk: iphonesimulator
