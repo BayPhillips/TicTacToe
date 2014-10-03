@@ -1,4 +1,7 @@
 language: objective-c
+before_install:
+- gem i cocoapods --no-ri --no-rdoc
+- brew uninstall xctool; brew install xctool --HEAD;
 xcode_project: TicTacToe.xcodeproj
 xcode_scheme: TicTacToe
 xcode_sdk: iphonesimulator
