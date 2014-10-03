@@ -7,10 +7,10 @@
 //
 
 import Foundation
-class GamePiece : NSObject, NSCopying {
+public class GamePiece : NSObject, NSCopying {
     let x : Int
     let y : Int
-    var playerOwner : Player?
+    public var playerOwner : Player?
     var isOpen: Bool {
         get {
             return playerOwner == nil
@@ -23,7 +23,7 @@ class GamePiece : NSObject, NSCopying {
         super.init()
     }
     
-    func copyWithZone(zone: NSZone) -> AnyObject {
+    public func copyWithZone(zone: NSZone) -> AnyObject {
         var newPiece : GamePiece = GamePiece(X: x, Y: y)
         newPiece.playerOwner = playerOwner
         return newPiece

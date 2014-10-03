@@ -8,17 +8,17 @@
 
 import Foundation
 
-struct MMLine {
+private struct MMLine {
     var row1, col1, row2, col2, row3, col3 : Int
 }
 
-struct MMResult {
+public struct MMResult {
     var x : Int
     var y : Int
     var score : Int
 }
 
-class GameAI {
+public class GameAI {
     var manager : GameManager
     var dummyBoard : GameBoard
     

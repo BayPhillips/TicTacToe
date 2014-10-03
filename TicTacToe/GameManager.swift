@@ -8,22 +8,21 @@
 
 import Foundation
 
-
-enum GameType: Int {
+public enum GameType: Int {
     case UnStarted = 0
     case SinglePlayer = 1
     case TwoPlayer = 2
 }
 
-class GameManager: NSObject {
-    var board : GameBoard
-    var player1 : Player
-    var player2 : Player
+public class GameManager: NSObject {
+    public var board : GameBoard
+    public var player1 : Player
+    public var player2 : Player
     var currentGameType : GameType
-    var whoseTurnIsIt : Int
+    public var whoseTurnIsIt : Int
     var turnCount : Int
     var finished : Bool
-    var viewController : TicTacToeViewController
+    var viewController : TicTacToeViewController?
     var AI : GameAI?
     var currentPlayerForTurn: Player! {
         get {
@@ -31,11 +30,11 @@ class GameManager: NSObject {
         }
     }
     
-    init(gameType: GameType, parentViewController: TicTacToeViewController) {
+    public init(gameType: GameType, parentViewController: TicTacToeViewController?) {
         currentGameType = gameType
         viewController = parentViewController
-        player1 = Player(playerName: "Player 1", cpu: false)
-        player2 = Player(playerName: "Player 2", cpu: currentGameType == GameType.SinglePlayer)
+        player1 = Player(playerName: "Player 1", cpu: false, pieceRepresentation: "X")
+        player2 = Player(playerName: "Player 2", cpu: currentGameType == GameType.SinglePlayer, pieceRepresentation: "O")
         turnCount = 0
         finished = false
         board = GameBoard()
@@ -44,7 +43,7 @@ class GameManager: NSObject {
         AI = GameAI(gameManager: self)
     }
     
-    func placedPiece(x : Int, y : Int) -> Bool {
+    public func placedPiece(x : Int, y : Int) -> Bool {
         let piece = board.pieceAt(x, y: y)
         if piece.isOpen {
             if whoseTurnIsIt == 1 {
@@ -53,7 +52,7 @@ class GameManager: NSObject {
             else {
                 piece?.playerOwner = player2
             }
-            viewController.collectionView.reloadItemsAtIndexPaths([NSIndexPath(forRow: x, inSection: y)])
+            viewController?.collectionView.reloadItemsAtIndexPaths([NSIndexPath(forRow: x, inSection: y)])
             nextTurn()
             return true
         }
@@ -61,7 +60,7 @@ class GameManager: NSObject {
         return false
     }
     
-    func nextTurn() {
+    public func nextTurn() {
         checkForWinner()
         if !finished {
             turnCount++
@@ -73,7 +72,7 @@ class GameManager: NSObject {
         }
     }
     
-    func checkForWinner() {
+    public func checkForWinner() {
         // Check all starting from top left
         // Do horizontal rows
         var hasWon : Bool = true
@@ -141,14 +140,14 @@ class GameManager: NSObject {
         }
     }
     
-    func endGameForWinner(winner : Player?) {
+    public func endGameForWinner(winner : Player?) {
         finished = true
         if let w = winner {
-            viewController.announceWinner("\(w.displayName) won! Play again?")
+            viewController?.announceWinner("\(w.displayName) won! Play again?")
         }
         else
         {
-            viewController.announceWinner("Draw! Play again?")
+            viewController?.announceWinner("Draw! Play again?")
         }
     }
 }

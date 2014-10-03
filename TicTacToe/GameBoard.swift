@@ -8,7 +8,7 @@
 
 import Foundation
 
-class GameBoard : NSObject, NSCopying {
+public class GameBoard : NSObject, NSCopying {
     var data : [NSIndexPath: GamePiece]
     lazy var columns : [Int] = [0,1,2]
     lazy var rows : [Int] = [0,1,2]
@@ -38,17 +38,35 @@ class GameBoard : NSObject, NSCopying {
         }
     }
     
-    func copyWithZone(zone: NSZone) -> AnyObject {
+    override public var description : String {
+        get {
+            var boardString: String = "\n"
+            for section in columns {
+                for row in rows {
+                    let piece = pieceAt(row, y: section)
+                    if let player = piece.playerOwner {
+                        boardString += player.pieceName
+                    } else {
+                        boardString += "_"
+                    }
+                }
+                boardString += "\n"
+            }
+            return boardString
+        }
+    }
+    
+    public func copyWithZone(zone: NSZone) -> AnyObject {
         var newBoard = GameBoard()
         newBoard.data = data
         return newBoard
     }
     
-    func pieceAt(x : Int, y : Int) -> GamePiece! {
+    public func pieceAt(x : Int, y : Int) -> GamePiece! {
         return data[NSIndexPath(forRow: y, inSection: x)] as GamePiece!
     }
     
-    func isOpen(x: Int, y: Int) -> Bool {
+    public func isOpen(x: Int, y: Int) -> Bool {
         return pieceAt(x, y: y).isOpen
     }
 }

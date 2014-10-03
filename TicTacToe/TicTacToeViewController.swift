@@ -8,14 +8,14 @@
 
 import UIKit
 
-class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+public class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     var collectionView : UICollectionView!
     var manager : GameManager!
     var playersLabel : UILabel!
     var hasLoaded : Bool = false
     
-    override func viewWillAppear(animated: Bool) {
+    override public func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         if(!hasLoaded) {
             edgesForExtendedLayout = UIRectEdge.None
@@ -113,19 +113,19 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
         playersLabel.text = text
     }
 
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    public func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return manager.board.columns.count
     }
     
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView!) -> Int {
+    public func numberOfSectionsInCollectionView(collectionView: UICollectionView!) -> Int {
         return manager.board.columns.count
     }
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout!, sizeForItemAtIndexPath indexPath: NSIndexPath!) -> CGSize {
+    public func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout!, sizeForItemAtIndexPath indexPath: NSIndexPath!) -> CGSize {
         return CGSize(width: (collectionView.bounds.width - 10) / 3, height: (collectionView.bounds.size.height - 10) / 3)
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         var cell = collectionView.dequeueReusableCellWithReuseIdentifier("Cell", forIndexPath: indexPath) as UICollectionViewCell
         cell.backgroundColor = UIColor.whiteColor()
         
@@ -136,7 +136,7 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
         let piece = manager.board.pieceAt(indexPath.row, y: indexPath.section)
         if(piece?.playerOwner != nil) {
             var label = UILabel(frame: cell.bounds)
-            label.text = piece?.playerOwner == manager.player1 ? "X" : "O"
+            label.text = piece?.playerOwner?.pieceName
             label.font = UIFont.systemFontOfSize(30)
             label.textAlignment = NSTextAlignment.Center
             cell.contentView.addSubview(label)
@@ -144,7 +144,7 @@ class TicTacToeViewController: UIViewController, UICollectionViewDelegate, UICol
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView!, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+    public func collectionView(collectionView: UICollectionView!, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         if manager.placedPiece(indexPath.row, y: indexPath.section) {
             setPlayersLabel()
         }

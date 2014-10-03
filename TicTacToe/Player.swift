@@ -7,8 +7,9 @@
 //
 
 import Foundation
-class Player : NSObject {
-    var name : NSString
+public class Player : NSObject {
+    var name : String
+    var pieceName : String
     var isCPU : Bool
     var displayName: String {
         get {
@@ -17,8 +18,9 @@ class Player : NSObject {
         }
     }
     
-    init(playerName: NSString, cpu: Bool) {
+    init(playerName: String, cpu: Bool, pieceRepresentation: String) {
         name = playerName
         isCPU = cpu
+        pieceName = pieceRepresentation
     }
 }
