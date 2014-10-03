@@ -14,14 +14,21 @@ public enum GameType: Int {
     case TwoPlayer = 2
 }
 
+public enum GameState: Int {
+    case InPlay = 0
+    case WonOrLost = 1
+    case Drawn = 2
+}
+
 public class GameManager: NSObject {
     public var board : GameBoard
     public var player1 : Player
     public var player2 : Player
+    public var gameState : GameState
     var currentGameType : GameType
     public var whoseTurnIsIt : Int
     var turnCount : Int
-    var finished : Bool
+    public var finished : Bool
     var viewController : TicTacToeViewController?
     var AI : GameAI?
     var currentPlayerForTurn: Player! {
@@ -39,6 +46,7 @@ public class GameManager: NSObject {
         finished = false
         board = GameBoard()
         whoseTurnIsIt = 1
+        gameState = GameState.InPlay
         super.init()
         AI = GameAI(gameManager: self)
     }
@@ -143,10 +151,12 @@ public class GameManager: NSObject {
     public func endGameForWinner(winner : Player?) {
         finished = true
         if let w = winner {
+            gameState = GameState.WonOrLost
             viewController?.announceWinner("\(w.displayName) won! Play again?")
         }
         else
         {
+            gameState = GameState.Drawn
             viewController?.announceWinner("Draw! Play again?")
         }
     }

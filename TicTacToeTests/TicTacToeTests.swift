@@ -47,6 +47,25 @@ class TicTacToeTests: XCTestCase {
             && manager.board.pieceAt(1, y: 0).playerOwner == manager.player2, "AI didn't successfully block fork. Board: \(manager.board)")
     }
     
+    func testAIShouldWin()
+    {
+        manager.placedPiece(0, y: 0)
+        manager.placedPiece(2, y: 1)
+        manager.placedPiece(2, y: 0)
+        XCTAssert(manager.gameState == GameState.WonOrLost, "AI did not win the game when it should have. Board: \(manager.board)")
+    }
+    
+    func testShouldDraw()
+    {
+        manager.placedPiece(0, y: 0)
+        manager.placedPiece(2, y: 1)
+        manager.placedPiece(1, y: 2)
+        manager.placedPiece(2, y: 0)
+        manager.placedPiece(0, y: 1)
+        XCTAssert(manager.gameState == GameState.Drawn, "Game should have drawn but didn't. Board: \(manager.board)")
+
+    }
+    
 //    func testPerformanceExample() {
 //        // This is an example of a performance test case.
 //        self.measureBlock() {
